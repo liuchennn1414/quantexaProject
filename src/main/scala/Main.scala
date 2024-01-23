@@ -6,7 +6,7 @@ import org.apache.log4j.{Level, Logger}
 import java.sql.Date
 import java.text.SimpleDateFormat
 
-object main{
+object Main{
 
   case class flightData(passengerId: Int, flightId: Int, from: String, to: String, date: Date)
   case class passengers(passengerId: Int, firstName: String, lastName: String)
@@ -26,21 +26,22 @@ object main{
   ))
 
   def main(args: Array[String]): Unit = {
-
+    // Initialising Spark session
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
 
-    // Initialize Spark session
-    val spark = SparkSession.builder().appName( name = "quantexaProject").master(master = "local").getOrCreate()
+    val spark = SparkSession.builder().appName(name = "quantexaProject").master(master = "local").getOrCreate()
 
     spark.sparkContext.setLogLevel("WARN")
 
     // Read CSV files
-    val flightData = readCSV.readFlight(spark, "/Users/liuchen/Desktop/quantexaProject/src/data/flightData.csv")
 
-    val passengersData = readCSV.readPassenger(spark, "/Users/liuchen/Desktop/quantexaProject/src/data/passengers.csv")
+    val flightData = ReadCSV.readFlight(spark, "src/resources/flightData.csv")
 
+    val passengersData = ReadCSV.readPassenger(spark, "src/resources/passengers.csv")
+
+    /*
     // Question 1
-    val Q1Ans = Question1.totalFlightsPerMonth(spark,flightData)
+    val Q1Ans = Question1.totalFlightsPerMonth(flightData)(spark)
     println("------ Question 1 ------")
     Q1Ans.show(5)
     /*
@@ -50,13 +51,11 @@ object main{
       .option("header", "true") // Write header in the CSV file
       .mode("overwrite") // Overwrite the file if it already exists
       .save("/Users/liuchen/Desktop/quantexaProject/src/output/Question1.csv")
-
      */
 
-    // Q1Ans.show(5)
 
     // Question 2
-    val Q2Ans = Question2.top100FrequentFlyers(spark,flightData, passengersData)
+    val Q2Ans = Question2.top100FrequentPassengers(flightData, passengersData)(spark)
     println("------ Question 2 ------")
     Q2Ans.show(5)
     /*
@@ -66,11 +65,10 @@ object main{
       .option("header", "true") // Write header in the CSV file
       .mode("overwrite") // Overwrite the file if it already exists
       .save("/Users/liuchen/Desktop/quantexaProject/src/output/Question2.csv")
-
      */
 
     // Question 3
-    val Q3Ans = Question3.output(spark,flightData)
+    val Q3Ans = Question3.output(flightData)(spark)
     println("------ Question 3 ------")
     Q3Ans.show(5)
     /*
@@ -80,11 +78,11 @@ object main{
       .option("header", "true") // Write header in the CSV file
       .mode("overwrite") // Overwrite the file if it already exists
       .save("/Users/liuchen/Desktop/quantexaProject/src/output/Question3.csv")
-
      */
 
+
     // Question 4
-    val Q4Ans = Question4.output(flightData)
+    val Q4Ans = Question4.output()(spark, flightData)
     println("------ Question 4 ------")
     Q4Ans.show(5)
     /*
@@ -94,26 +92,29 @@ object main{
       .option("header", "true") // Write header in the CSV file
       .mode("overwrite") // Overwrite the file if it already exists
       .save("/Users/liuchen/Desktop/quantexaProject/src/output/Question4.csv")
-
      */
 
 
+    // Q4 - Bonus Question
+    println("------ Bonus Question ------")
     // Example date strings
     val fromDateString = "2017-01-01"
-    val toDateString = "2017-10-01"
+    val toDateString = "2017-04-30"
 
     // Define the date format
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
     // Parse the strings to obtain java.util.Date objects
-    val fromDate: Date = new Date(dateFormat.parse(fromDateString).getTime)
-    val toDate: Date = new Date(dateFormat.parse(toDateString).getTime)
 
+    val fromDate: Option[Date] = Option(dateFormat.parse(fromDateString)).map(d => new java.sql.Date(d.getTime))
 
-    val Bonus = Question4.flownTogether(flightData,6,fromDate, toDate)
-    println("------ Bonus Question ------")
+    val toDate: Option[Date] = Option(dateFormat.parse(toDateString)).map(d => new java.sql.Date(d.getTime))
+
+    val Bonus = Question4.flownTogether(6,fromDate, toDate)(spark,flightData)
+
     Bonus.show(5)
 
+     */
 
     // Stop the Spark session
     spark.stop()

@@ -1,55 +1,64 @@
 package org.learnSpark.application
-import org.apache.spark.sql.{DataFrame, Dataset, SparkSession, functions}
+import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.Encoders
 import java.sql.Date
 
 
 object Question4 {
-  case class joinFlight(passenger1Id: Int, passenger2Id: Int, flightId: Int, date: Date)
-  case class commonFlightCount(passenger1Id: Int, passenger2Id: Int, commonCount: Long, from: Date, to: Date)
+  // create two new case class which could be used later in this Qn
+  case class joinedFlightData(passenger1Id: Int, passenger2Id: Int, flightId: Int, date: Date)
+  case class flightTogetherData(passenger1Id: Int, passenger2Id: Int, flightsTogetherCount: Long, from: Date, to: Date)
 
-  def joinedFlight(flightData: Dataset[main.flightData]): Dataset[joinFlight] = {
-    val joinedFlights = flightData.as("f1")
-      // join based on flightId, passenger id 1 < 2 to avoid duplicates & cross product with self
+  // flightData cross join itself to obtain pairwise customer information
+  def joinedFlight(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[joinedFlightData] = {
+    import spark.implicits._
+    val joinedFlightDataset = flightData.as("f1")
+      // cross join based on flightId, passenger id 1 < 2 to avoid duplicates / cross product with self
       .join(flightData.as("f2"), col("f1.flightId") === col("f2.flightId") && col("f1.passengerId") < col("f2.passengerId"))
       .select(col("f1.passengerId").alias("passenger1Id"),
         col("f2.passengerId").alias("passenger2Id"),
         col("f1.flightId"),
         col("f1.date")
-      ).as[joinFlight](Encoders.product[joinFlight])
-
-    joinedFlights
+      ).as[joinedFlightData]
+    joinedFlightDataset
   }
 
-  def commonFlight(flightData: Dataset[main.flightData]): Dataset[commonFlightCount] = {
-    val filteredCommonFlight = joinedFlight(flightData)
+  // For extra mark -> Modified from and to to be optional input so that this function can be reused.
+  def flownTogether(atLeastNTimes: Int, fromDate: Option[Date] = None, toDate: Option[Date] = None)(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[flightTogetherData] = {
+    import spark.implicits._
+    val joinedFlightDataset = joinedFlight(spark, flightData)
+
+    // we want to ensure this function can be reused even for Qn4's original output, hence, if the user do not input a value for date, we set date range to be the full range in the dataset
+    val minDate = fromDate.getOrElse {
+      val minDateRow = joinedFlightDataset.agg(min("date")).head() // if no input, choose the minimum date value
+      minDateRow.getAs[Date](0)
+    }
+
+    val maxDate = toDate.getOrElse {
+      val maxDateRow = joinedFlightDataset.agg(max("date")).head() // if no input, choose the maximum date value
+      maxDateRow.getAs[Date](0)
+    }
+
+    val result = joinedFlightDataset
+      .filter(col("date").between(minDate,maxDate)) // first filter the data to the range required
       .groupBy("passenger1Id","passenger2Id")
-      .agg(count("*").alias("commonCount"), min("date").alias("from"), max("date").alias("to"))
-      .as[commonFlightCount](Encoders.product[commonFlightCount])
-    filteredCommonFlight
-  }
-
-  def output(flightData: Dataset[main.flightData]): DataFrame = {
-    val commonFlightDS = commonFlight(flightData)
-    val output = commonFlightDS
-      .filter(col("commonCount") > 3)
-      .orderBy(col("commonCount").desc)
-      .select("passenger1Id", "passenger2Id", "commonCount")
-
-    output
-  }
-
-  def flownTogether(flightData: Dataset[main.flightData], atLeastNTimes: Int, from: Date, to: Date): Dataset[commonFlightCount] = {
-    val filteredCommonFlight = joinedFlight(flightData)
-    val result = filteredCommonFlight
-      .filter(col("date").between(from,to))
-      .groupBy("passenger1Id","passenger2Id")
-      .agg(count("*").alias("commonCount"), min("date").alias("from"), max("date").alias("to"))
-      .filter(col("commonCount") > atLeastNTimes)
-      .orderBy(col("commonCount").desc)
-      .as[commonFlightCount](Encoders.product[commonFlightCount])
+      //assuming that flightId is unique for each flight, thus, a passenger can only be on a flight for once.
+      .agg(count("*").alias("flightsTogetherCount"), min("date").alias("from"), max("date").alias("to")) // within this date range, find the number of shared flight
+      .filter(col("flightsTogetherCount") > atLeastNTimes)
+      .orderBy(col("flightsTogetherCount").desc)
+      .as[flightTogetherData]
     result
+  }
+
+  def output()(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[(Int, Int, Long)] = {
+    import spark.implicits._
+
+    val flightTogetherData = flownTogether(3) // no input of date, so default is to choose the full range of date
+
+    val output = flightTogetherData // since the output is already in the desired format, we just need to select the required columns
+      .select("passenger1Id", "passenger2Id", "flightsTogetherCount")
+      .as[(Int, Int, Long)]
+    output
   }
 
 }
