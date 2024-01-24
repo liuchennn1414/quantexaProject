@@ -1,17 +1,19 @@
 package org.learnSpark.application
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.{Dataset}
 import org.apache.spark.sql.functions._
 import java.sql.Date
 
 
 object Question4 {
+
+  import Main.spark.implicits._
+
   // create two new case class which could be used later in this Qn
   case class joinedFlightData(passenger1Id: Int, passenger2Id: Int, flightId: Int, date: Date)
   case class flightTogetherData(passenger1Id: Int, passenger2Id: Int, flightsTogetherCount: Long, from: Date, to: Date)
 
   // flightData cross join itself to obtain pairwise customer information
-  def joinedFlight(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[joinedFlightData] = {
-    import spark.implicits._
+  def joinedFlight(flightData: Dataset[Main.flightData]): Dataset[joinedFlightData] = {
     val joinedFlightDataset = flightData.as("f1")
       // cross join based on flightId, passenger id 1 < 2 to avoid duplicates / cross product with self
       .join(flightData.as("f2"), col("f1.flightId") === col("f2.flightId") && col("f1.passengerId") < col("f2.passengerId"))
@@ -24,9 +26,8 @@ object Question4 {
   }
 
   // For extra mark -> Modified from and to to be optional input so that this function can be reused.
-  def flownTogether(atLeastNTimes: Int, fromDate: Option[Date] = None, toDate: Option[Date] = None)(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[flightTogetherData] = {
-    import spark.implicits._
-    val joinedFlightDataset = joinedFlight(spark, flightData)
+  def flownTogetherCount(flightData: Dataset[Main.flightData], atLeastNTimes: Int, fromDate: Option[Date] = None, toDate: Option[Date] = None): Dataset[flightTogetherData] = {
+    val joinedFlightDataset = joinedFlight(flightData)
 
     // we want to ensure this function can be reused even for Qn4's original output, hence, if the user do not input a value for date, we set date range to be the full range in the dataset
     val minDate = fromDate.getOrElse {
@@ -50,10 +51,9 @@ object Question4 {
     result
   }
 
-  def output()(implicit spark: SparkSession, flightData: Dataset[Main.flightData]): Dataset[(Int, Int, Long)] = {
-    import spark.implicits._
+  def output(flightData: Dataset[Main.flightData]): Dataset[(Int, Int, Long)] = {
 
-    val flightTogetherData = flownTogether(3) // no input of date, so default is to choose the full range of date
+    val flightTogetherData = flownTogetherCount(flightData,3) // no input of date, so default is to choose the full range of date
 
     val output = flightTogetherData // since the output is already in the desired format, we just need to select the required columns
       .select("passenger1Id", "passenger2Id", "flightsTogetherCount")

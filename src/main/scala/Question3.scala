@@ -13,6 +13,9 @@ object Question3 extends Serializable {
   case class passengerRoute(passengerId: Int, routes: List[String])
   case class passengerNonUKRouteCount(passengerId: Int, longestRun: Int)
 
+  // import spark
+  import Main.spark.implicits._
+
   // helper function 1: get the distinct count of country without visiting uk
   def getLongestNonUkRun(route: Seq[String]): Int = {
     val (maxLength, _, _) = route.foldLeft((0, 0, Set.empty[String])) { // iterate over the full routes
@@ -53,8 +56,7 @@ object Question3 extends Serializable {
   val countRun: UserDefinedFunction = udf(getLongestNonUkRun _)
 
   // get passenger routes and output as [passengerId, routes]
-  def getPassengerRoute(flightData: Dataset[Main.flightData])(implicit spark: SparkSession): Dataset[passengerRoute] = {
-    import spark.implicits._
+  def getPassengerRoute(flightData: Dataset[Main.flightData]): Dataset[passengerRoute] = {
 
     val passengerRoute = flightData
       .orderBy("passengerId", "date", "flightId") // if there are more than one flight on one day, assume it follows flightId order
@@ -66,8 +68,8 @@ object Question3 extends Serializable {
   }
 
   // output function to output the longest run for each passenger
-  def output(flightData: Dataset[Main.flightData])(implicit spark: SparkSession): Dataset[passengerNonUKRouteCount] = {
-    import spark.implicits._
+  def output(flightData: Dataset[Main.flightData]): Dataset[passengerNonUKRouteCount] = {
+
     val routeDS = getPassengerRoute(flightData)
     val output = routeDS
       .withColumn("longestRun", countRun(col("routes")))

@@ -4,8 +4,8 @@ import org.apache.spark.sql.functions._
 
 object Question1 {
   // Find the DISTINCT number of flight per month
-  def totalFlightsPerMonth(flightData: Dataset[Main.flightData])(implicit spark: SparkSession): Dataset[(String, Long)] = {
-    import spark.implicits._
+  import Main.spark.implicits._
+  def totalFlightsPerMonth(flightData: Dataset[Main.flightData]): Dataset[(String, Long)] = {
     val output = flightData
       .withColumn("month", date_format($"date", "MM"))
       .groupBy("month")
