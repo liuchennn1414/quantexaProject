@@ -1,4 +1,4 @@
-Quantexa Assessment 
+Quantexa Project 
 ---
 Author: Lynn Liu 
 
@@ -31,22 +31,27 @@ There are 2 parts under Main that you can run:
 1. main function which returns the first 5 rows of each question (Q1-Q4)
 2. additional function which accept input to show first 5 rows of the extra question from Q4 
 
-To run the program: 
-1. git clone this repository with: 
+To run the program in intelliJ IDEA: 
+1. git clone this repository : 
 ```bash
-git clone https://github.com/liuchennn1414/quantexaProject.git
-cd quantexaProject
+$ git clone https://github.com/liuchennn1414/quantexaProject.git
 ```
 2. To run the main function: 
+- Option1: Click the run button to run main 
+- Option2: In sbt shell: 
 ```bash
-git clone https://github.com/liuchennn1414/quantexaProject.git
-cd quantexaProject
+$ runMain org.learnSpark.application.Main
 ```
+
 3. To run the additional function: 
 ```bash
-# example input 
-git clone https://github.com/liuchennn1414/quantexaProject.git
-cd quantexaProject
+# example input 1 
+$ runMain org.learnSpark.application.Main flownTogether 6 "2017-05-02" "2017-11-11"
+```
+
+```bash
+# example input 2 (no date input) 
+$ runMain org.learnSpark.application.Main flownTogether 6 
 ```
 You can modify the example input to test out the function. 
 Take note that the dates are optional. If no date is put, it will generate result for the full date range. However, an integer value is required to get the minimum threshold of count. 
@@ -70,7 +75,7 @@ Although test cases are not written, here are some ideas of what we can do:
 1. Extract out a random passenger, print out its to & from column and make a manual comparison with the actual count. 
 ###### Q4
 1. Extract out the unique flightIds of 2 passengers, iterate over to find if the number of matching flightIds match with the answer. 
-
+2. Check for any wrong record with count <= 3 
 
 
 

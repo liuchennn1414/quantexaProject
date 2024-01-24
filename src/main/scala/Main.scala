@@ -44,32 +44,37 @@ object Main {
   // main function
   def main(args: Array[String]): Unit = {
 
-    // Question 1
-    val Q1Ans = Question1.totalFlightsPerMonth(flightDataSet)
-    println("------ Question 1 ------")
-    Q1Ans.show(5)
+    if (args.nonEmpty) {
+      // give input to main to trigger flownTogether
+      val functionArgs = args.tail
+      val atLeastNTimes = functionArgs(0).toInt
+      val fromDateString = functionArgs.lift(1)
+      val toDateString = functionArgs.lift(2)
+      println(s"Output for flownTogether($atLeastNTimes,$fromDateString,$toDateString): ")
+      val output = flownTogether(atLeastNTimes,fromDateString,toDateString)
+      output.show(5)
 
+    } else { // no additional input then just give first 4
+      // Question 1
+      val Q1Ans = Question1.totalFlightsPerMonth(flightDataSet)
+      println("------ Question 1 ------")
+      Q1Ans.show(5)
 
-    // Question 2
-    val Q2Ans = Question2.top100FrequentPassengers(flightDataSet, passengersDataSet)
-    println("------ Question 2 ------")
-    Q2Ans.show(5)
+      // Question 2
+      val Q2Ans = Question2.top100FrequentPassengers(flightDataSet, passengersDataSet)
+      println("------ Question 2 ------")
+      Q2Ans.show(5)
 
-    // Question 3
-    val Q3Ans = Question3.output(flightDataSet)
-    println("------ Question 3 ------")
-    Q3Ans.show(5)
+      // Question 3
+      val Q3Ans = Question3.output(flightDataSet)
+      println("------ Question 3 ------")
+      Q3Ans.show(5)
 
-    // Question 4
-    val Q4Ans = Question4.output(flightDataSet)
-    println("------ Question 4 ------")
-    Q4Ans.show(5)
-
-    // bonus (testing example)
-    println("------ Bonus Question with testing example ------")
-    println("------ flownTogether(3,\"2017-05-02\",\"2017-11-11\") ------")
-    val bonus = flownTogether(3,"2017-05-02","2017-11-11")
-    bonus.show(5)
+      // Question 4
+      val Q4Ans = Question4.output(flightDataSet)
+      println("------ Question 4 ------")
+      Q4Ans.show(5)
+    }
 
     // Stop the Spark session
     spark.stop()
@@ -77,11 +82,13 @@ object Main {
 
   // Additional Qn from Q4
   // Allow users to input string only and perform the conversion to date
-  def flownTogether(atLeastNTimes: Int, fromDateString: String, toDateString: String): Dataset[Question4.flightTogetherData] = {
+  def flownTogether(atLeastNTimes: Int, fromDateString: Option[String], toDateString: Option[String]): Dataset[Question4.flightTogetherData] = {
     // Parse the strings to obtain java.util.Date objects
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-    val fromDate = Option(dateFormat.parse(fromDateString)).map(d => new java.sql.Date(d.getTime))
-    val toDate = Option(dateFormat.parse(toDateString)).map(d => new java.sql.Date(d.getTime))
+    val fromDate = fromDateString.map(d => new java.sql.Date(dateFormat.parse(d).getTime))
+    val toDate = toDateString.map(d => new java.sql.Date(dateFormat.parse(d).getTime))
+    //val fromDate = Option(dateFormat.parse(fromDateString)).map(d => new java.sql.Date(d.getTime))
+    //val toDate = Option(dateFormat.parse(toDateString)).map(d => new java.sql.Date(d.getTime))
 
     val Bonus = Question4.flownTogetherCount(flightDataSet, atLeastNTimes, fromDate, toDate)
     Bonus
