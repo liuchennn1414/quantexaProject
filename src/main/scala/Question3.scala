@@ -33,17 +33,22 @@ object Question3 extends Serializable {
     maxLength
   }
 
-  // helper function 2: given 2 list from and to, find the full routes of passenger (include domestic flight)
+  // helper function 2: given 2 list from and to, find the full routes of passenger
+  /*
+  Remark: reason we use a recursive function here instead of simply make the to / from column a list, is to account for extreme case where from -> to chain might not be consecutive
+  e.g. passenger could choose other transportation in transit between countries, resulting in A -> B, C->D, where B -> C is missing, but all 4 countries should be counted.
+  This function also include domestic flight, which means that A -> A is possible and it is indeed the correct route taken by the passenger. This route could be useful for other use cases in real life context.
+  Duplicate cities and domestic flight will be removed by getLongestNonUkRun
+   */
   @tailrec
   def createRoute(from: List[String], to: List[String], routes: List[String]): List[String] = {
     (from, to) match { // pattern matching, as from and to list are not null:
-      case (fromHead :: fromTail, toHead :: toTail) => // break each list to [0] and [1:]
-        if (routes.isEmpty || routes.last != fromHead) { // if list is empty, or the previous to != current front
-          createRoute(fromTail, toTail, routes :+ fromHead :+ toHead) // append current from -> to into the route
+      case (fromHead :: fromTail, toHead :: toTail) => // break to [0] and [1:]
+        if (routes.isEmpty || routes.last != fromHead) { // if route is empty, or the previous to != current front:
+          createRoute(fromTail, toTail, routes :+ fromHead :+ toHead) // append current from & current to into the route
         } else {
-          createRoute(fromTail, toTail, routes :+ toHead) // else if previous to == current from, only append the next destination to avoid double count
+          createRoute(fromTail, toTail, routes :+ toHead) // else if previous to == current from, only append the current to, to avoid double count
         }
-
       case _ => routes // output list after iteration is done
     }
   }
