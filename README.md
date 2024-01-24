@@ -4,7 +4,7 @@ Author: Lynn Liu
 
 ## Project Structure
 This assessment is written with both scala and spark. Each question is stored on its own as one class. 
-The reason for us to adapt such a structure instead of one class for flightData and one class for passengers is for the convenience to review the main logic of each question, though a more OOP style structure could be preferred in real life context. 
+The reason for us to adopt such a structure instead of one class for flightData and one class for passengers is for the convenience to review the main logic of each question, though a more OOP style structure could be preferred in real life context. 
 
 ```bash
 quantexaProject
