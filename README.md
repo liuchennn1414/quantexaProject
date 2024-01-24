@@ -81,7 +81,8 @@ Although test cases are not written, here are some ideas of what we can do:
 2. Extract out unique flightId within a particular month and check if the count match
 ###### Q2
 1. Check if number of unique passengerId == 100
-2. Extract out a particular passengerId and check if the number of unique flightIds match the count
+2. Extract out a particular passengerId and verify if the name is correct (to check for the join)
+3. Extract out a particular passengerId and check if the number of unique flightIds match the count
 ###### Q3
 1. Extract out a random passenger who did not visited uk, print out its to & from column and count the distinct number of countries this passenger has visited. 
 2. Extract out a passenger who visited uk, and check if the longestRun logic is correct (i.e. longest run without visiting uk)
