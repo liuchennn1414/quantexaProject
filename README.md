@@ -31,7 +31,7 @@ There are 2 parts under Main that you can run:
 1. main function which returns the first 5 rows of each question (Q1-Q4)
 2. additional function which accept input to show first 5 rows of the extra question from Q4 
 
-To run the program in intelliJ IDEA: 
+To run the program in IntelliJ IDEA: 
 1. Create new project from VCS and copy in the repository's URL to clone the project: 
 ```bash
 https://github.com/liuchennn1414/quantexaProject.git
