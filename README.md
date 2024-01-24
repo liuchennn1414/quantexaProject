@@ -32,13 +32,12 @@ There are 2 parts under Main that you can run:
 2. additional function which accept input to show first 5 rows of the extra question from Q4 
 
 To run the program in intelliJ IDEA: 
-1. Create new project from VCS and copy in the repository's URL: 
+1. Create new project from VCS and copy in the repository's URL to clone the project: 
 ```bash
 https://github.com/liuchennn1414/quantexaProject.git
 ```
-and click on Clone. 
 
-2. Click Build at the side bar to build the project
+2. Click Build at the side bar to build the project (This is optional)
 
 3. To run the main function and view the output of the first 4 questions, open sbt shell and run: 
 ```bash
@@ -46,13 +45,14 @@ runMain org.learnSpark.application.Main
 ```
 
 4. To run the additional function: 
+
 ```bash
-# example input 1 
+# Example input 1
 runMain org.learnSpark.application.Main flownTogether 6 "2017-05-02" "2017-11-11"
 ```
 
 ```bash
-# example input 2 (no date input) 
+# Example input 2 (no date input)
 runMain org.learnSpark.application.Main flownTogether 6 
 ```
 We can modify the example input to test out the function. 
