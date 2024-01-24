@@ -17,16 +17,16 @@ quantexaProject
 │   │   │   ├── Question2
 │   │   │   ├── Question3
 │   │   │   └── Question4
-│   │   ├── resources
-│   │   │   ├── flightData.csv
-│   │   │   ├── passengers.csv
-│   │   ├── output
-│   │   │   ├── Q1.csv
-│   │   │   ├── Q2.csv
-│   │   │   ├── Q3.csv
-│   │   │   ├── Q4.csv
-│   │   ├── test
-│   │   │   ├── scala
+│   ├── resources
+│   │   ├── flightData.csv
+│   │   ├── passengers.csv
+│   ├── output
+│   │   ├── Q1.csv
+│   │   ├── Q2.csv
+│   │   ├── Q3.csv
+│   │   ├── Q4.csv
+│   ├── test
+│   │   ├── scala
 └── build.sbt
 ```
 
