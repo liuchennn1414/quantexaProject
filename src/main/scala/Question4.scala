@@ -1,5 +1,5 @@
 package org.learnSpark.application
-import org.apache.spark.sql.{Dataset}
+import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions._
 import java.sql.Date
 
@@ -25,7 +25,7 @@ object Question4 {
     joinedFlightDataset
   }
 
-  // For extra mark -> Modified from and to to be optional input so that this function can be reused.
+  // For Bonus Qn -> Modified from and to to be optional input so that this function can be reused.
   def flownTogetherCount(flightData: Dataset[Main.flightData], atLeastNTimes: Int, fromDate: Option[Date] = None, toDate: Option[Date] = None): Dataset[flightTogetherData] = {
     val joinedFlightDataset = joinedFlight(flightData)
 

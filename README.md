@@ -17,8 +17,16 @@ quantexaProject
 │   │   │   ├── Question2
 │   │   │   ├── Question3
 │   │   │   └── Question4
-│   └── test
-│       └── scala
+│   │   ├── resources
+│   │   │   ├── flightData.csv
+│   │   │   ├── passengers.csv
+│   │   ├── output
+│   │   │   ├── Q1.csv
+│   │   │   ├── Q2.csv
+│   │   │   ├── Q3.csv
+│   │   │   ├── Q4.csv
+│   │   ├── test
+│   │   │   ├── scala
 └── build.sbt
 ```
 
@@ -72,12 +80,26 @@ Although test cases are not written, here are some ideas of what we can do:
 1. Check if the data are exactly 12 months (assuming only one year data available)
 2. Extract out unique flightId within a particular month and check if the count match
 ###### Q2
-1. Extract out unique passengerId and check if the number of unique flightIds match the count
+1. Check if number of unique passengerId == 100
+2. Extract out a particular passengerId and check if the number of unique flightIds match the count
 ###### Q3
-1. Extract out a random passenger, print out its to & from column and make a manual comparison with the actual count. 
+1. Extract out a random passenger who did not visited uk, print out its to & from column and count the distinct number of countries this passenger has visited. 
+2. Extract out a passenger who visited uk, and check if the longestRun logic is correct (i.e. longest run without visiting uk)
 ###### Q4
-1. Extract out the unique flightIds of 2 passengers, iterate over to find if the number of matching flightIds match with the answer. 
-2. Check for any wrong record with count <= 3 
+1. Check for any wrong record with count <= 3
+2. Extract out the unique flightIds of 2 passengers, compare the 2 lists to find out if the number of matching flightIds match with the answer. 
+###### Q4 - Extra 
+1. Check if the date range in output does fall into the input date range 
+2. Extract out the unique flightIds of 2 passengers within the range, compare the 2 lists to find out if the number of matching flightIds match with the answer.
+
+### How to implement: 
+1. Basic test cases / those checking for basic correctness like number of months / passengers can be implemented within each question class to ensure the output has the right format
+2. We can also use ScalaTest framework such as FunSuite for unit testing 
+
+### Others - Efficiency Test: 
+1. Run the project on a larger set of data and evaluate the time & space complexity 
+
+
 
 
 

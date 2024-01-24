@@ -1,7 +1,7 @@
 package org.learnSpark.application
 
 import org.apache.spark.sql.expressions.UserDefinedFunction
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.functions.udf
 

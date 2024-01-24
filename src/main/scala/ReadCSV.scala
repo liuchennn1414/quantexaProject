@@ -1,6 +1,6 @@
 package org.learnSpark.application
 import org.apache.spark.sql.functions.{col, to_date}
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.types._
 
 import scala.io.Source
@@ -10,9 +10,9 @@ object ReadCSV {
 
   import Main.spark.implicits._
 
-
   def readFlight(filePath: String): Dataset[Main.flightData] = {
 
+    // to retrieve absolute path
     val resource: Path = Paths.get(filePath).toAbsolutePath
     val absolutePath: String = resource.toString
 

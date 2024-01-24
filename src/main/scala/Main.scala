@@ -45,7 +45,7 @@ object Main {
   def main(args: Array[String]): Unit = {
 
     if (args.nonEmpty) {
-      // give input to main to trigger flownTogether
+      // give input to main -> calling flownTogether
       val functionArgs = args.tail
       val atLeastNTimes = functionArgs(0).toInt
       val fromDateString = functionArgs.lift(1)
@@ -54,7 +54,7 @@ object Main {
       val output = flownTogether(atLeastNTimes,fromDateString,toDateString)
       output.show(5)
 
-    } else { // no additional input then just give first 4
+    } else { // no additional input then just give first 4 questions' outputs
       // Question 1
       val Q1Ans = Question1.totalFlightsPerMonth(flightDataSet)
       println("------ Question 1 ------")
@@ -87,8 +87,6 @@ object Main {
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
     val fromDate = fromDateString.map(d => new java.sql.Date(dateFormat.parse(d).getTime))
     val toDate = toDateString.map(d => new java.sql.Date(dateFormat.parse(d).getTime))
-    //val fromDate = Option(dateFormat.parse(fromDateString)).map(d => new java.sql.Date(d.getTime))
-    //val toDate = Option(dateFormat.parse(toDateString)).map(d => new java.sql.Date(d.getTime))
 
     val Bonus = Question4.flownTogetherCount(flightDataSet, atLeastNTimes, fromDate, toDate)
     Bonus
